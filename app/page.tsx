@@ -1,11 +1,11 @@
 import prisma from "@/lib/prisma";
+import AuthButton from "@/components/ui/auth-button";
+import SignOutButton from "@/components/ui/signout-button";
 
 export default async function Home() {
-  const users = await prisma.user.findMany();
-  console.log(users)
   return (
-    <div>
-      <h2>Hello</h2>
+    <div className="">
+      <AuthButton/>
     </div>
   );
 }
