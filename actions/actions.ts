@@ -56,4 +56,18 @@ export async function addSolve(time: string) {
 }
 
 
+export async function fetchSolves() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) return [];
 
+  try {
+    const solves = await prisma.solve.findMany({ // or db.query.solves.findMany() for Drizzle
+      where: { user: { email: session.user.email } },
+      orderBy: { createdAt: 'desc' },
+    });
+    return solves;
+  } catch (err) {
+    console.error('Error fetching solves:', err);
+    return [];
+  }
+}

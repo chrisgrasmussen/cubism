@@ -6,7 +6,7 @@ type SolveProps = {
   id: string;
   time: string;
   createdAt: string;
-  onDelete: (id: string) => void;  // <-- Add this
+  onDelete: (id: string) => void;
 };
 
 export default function Solve({ id, time, createdAt, onDelete }: SolveProps) {
@@ -16,7 +16,7 @@ export default function Solve({ id, time, createdAt, onDelete }: SolveProps) {
   const handleDelete = () => {
     setLoading(true);
     setError(null);
-    onDelete(id);  // <-- Call the onDelete prop
+    onDelete(id); 
   };
 
 

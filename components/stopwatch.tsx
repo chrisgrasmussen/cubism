@@ -6,33 +6,30 @@ import { useRouter } from 'next/navigation';
 
 export default function Stopwatch() {
   const router = useRouter();
+
+  // State to manage stopwatch time and status
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStopped, setHasStopped] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const saveSolve = async (time: string) => {
-    try {
-      const res = await fetch('/api/solves/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ time }),
-      });
+const saveSolve = async (time: string) => {
+  try {
+    const res = await fetch('/api/solves/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ time }),
+    });
 
-      if (!res.ok) {
-        throw new Error('Failed to save solve');
-      }
+    if (!res.ok) throw new Error('Failed to save solve');
 
-      const data = await res.json();
-      console.log('Solve saved!', data);
-      router.refresh(); // Refresh the page to show the new solve
-
-    } catch (err) {
-      console.error('Error saving solve:', err);
-    }
-  };
+    await res.json(); // optional
+    router.refresh(); // Refresh the page to show updated solves
+    
+  } catch (err) {
+    console.error('Error saving solve:', err);
+  }
+};
 
 
   useEffect(() => {
