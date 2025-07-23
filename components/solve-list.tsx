@@ -1,41 +1,60 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { useTransition } from 'react';
+import { useState, useEffect } from 'react';
+import Solve from '@/components/solve'; // if using absolute path
+import { useRouter } from 'next/navigation';
 
-export function SolveList({ solves }: { solves: { id: number; time: string }[] }) {
-  const [isPending, startTransition] = useTransition();
 
-  async function handleDelete(solveId: number) {
-    startTransition(async () => {
+type SolveType = {
+  id: string;
+  time: string;
+  createdAt: string;
+};
+
+export function SolveList() {
+  const [solves, setSolves] = useState<SolveType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const fetchSolves = async () => {
+    try {
+      const res = await fetch('/api/solves/get');
+      if (!res.ok) throw new Error('Failed to fetch solves');
+      const data = await res.json();
+      setSolves(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSolves();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
       const res = await fetch('/api/solves/delete', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ solveId }),
+        body: JSON.stringify({ solveId: id }),
       });
+      if (!res.ok) throw new Error('Failed to delete solve');
+      setSolves((prev) => prev.filter((solve) => solve.id !== id));
+    } catch (err) {
+      alert('Error deleting solve');
+      console.error(err);
+    }
+  };
 
-      if (res.ok) {
-        // Optionally refresh the page or re-fetch solves
-        window.location.reload(); // OR revalidatePath on the server
-      } else {
-        console.error('Failed to delete');
-      }
-    });
-  }
+  if (loading) return <p>Loading solves...</p>;
+  if (solves.length === 0) return <p>No solves found.</p>;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {solves.map((solve) => (
-        <div key={solve.id} className="bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md flex items-center justify-between w-64">
-          <p>{solve.time}</p>
-          <button
-            disabled={isPending}
-            onClick={() => handleDelete(solve.id)}
-            className="bg-red-500 rounded-lg p-2 hover:shadow-md text-white cursor-pointer"
-          >
-            Delete
-          </button>
-        </div>
+        <Solve key={solve.id} {...solve} onDelete={handleDelete} />
       ))}
     </div>
   );

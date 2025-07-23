@@ -6,22 +6,25 @@ import { SolveList } from "@/components/solve-list";
 import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
+
+  // Fetch the current user
   const user = await getCurrentUser();
-  const solves = user ? await getSolves(user.id) : [];
-
+  console.log("Dashboard user:", user);
   if (!user) {
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
-
+  const userId = await getUserId(user.email);
+  if (!userId) {
+    redirect("/login");
+  }
+  const solves = await getSolves(userId);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 space-y-4">
-      <AuthButton />
       <Stopwatch />
-      <h1>Dashboard</h1>
-      <p>Hello {user?.name || "User"}! Welcome to your dashboard!</p>
+      <p>Hello {user.name || "Friend"}</p>
+      <p>Welcome to Cube Log</p>
       <p>Your user ID is: {user?.id || "Not logged in"}</p>
       <p>Your email is: {user?.email || "Not logged in"}</p>
-      <SolveList solves={solves.map(({ id, time }) => ({ id: Number(id), time: String(time) }))} />
     </div>
   );
 }
