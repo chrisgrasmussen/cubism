@@ -13,6 +13,7 @@ export default function Stopwatch() {
   const [hasStopped, setHasStopped] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+
 const saveSolve = async (time: string) => {
   try {
     const res = await fetch('/api/solves/add', {
@@ -20,7 +21,7 @@ const saveSolve = async (time: string) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ time }),
     });
-
+    
     if (!res.ok) throw new Error('Failed to save solve');
 
     await res.json(); // optional
@@ -30,6 +31,8 @@ const saveSolve = async (time: string) => {
     console.error('Error saving solve:', err);
   }
 };
+
+
 
 
   useEffect(() => {
@@ -71,7 +74,7 @@ const saveSolve = async (time: string) => {
         saveSolve(formattedTime);
         console.log('Solve saved:', formattedTime);
         clearInterval(intervalRef.current!);
-
+        
       }
     };
 
@@ -88,13 +91,17 @@ const saveSolve = async (time: string) => {
 };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-8 border rounded-lg w-fit mx-auto">
-      <h2 className="text-4xl font-bold">{formatTime(time)}</h2>
-      <p className="text-gray-500 text-sm text-center">
-        Press <kbd className="font-mono">Space</kbd> to {isRunning ? 'stop' : hasStopped ? 'reset/save' : 'start'}.
-        <br />
-        After stopping: <kbd className="font-mono">R</kbd> = Reset, <kbd className="font-mono">S</kbd> = Save
-      </p>
-    </div>
+    <>
+        <div className="flex flex-row items-center justify-center gap-4 p-8 border bg-blue-100 rounded-lg w-fit mx-auto">
+          <div className="flex flex-col items-center justify-center gap-4 p-8 border bg-yellow-100 rounded-lg w-fit mx-auto">
+          <h2 className="text-4xl font-bold">{formatTime(time)}</h2>
+          <p className="text-gray-500 text-sm text-center">
+            Press <kbd className="font-mono">Space</kbd>to <strong> {isRunning ? 'STOP' : hasStopped ? 'reset/save' : 'START'}.</strong>
+            <br />
+            After stopping: <kbd className="font-mono"><strong>R</strong></kbd> = Reset, <kbd className="font-mono"><strong>S</strong></kbd> = Save
+          </p>
+        </div>
+        </div>
+    </>
   );
 }

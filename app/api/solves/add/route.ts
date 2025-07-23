@@ -20,6 +20,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'User ID missing' }, { status: 400 });
   }
 
+  // check to see if the time has already been added
+  const existingSolve = await prisma.solve.findFirst({
+    where: {
+      userId: user.id,
+      time,
+      createdAt: {
+        gte: new Date(Date.now() - 0.01 * 60 * 60 * 1000), // within the last minute
+      },
+    },
+  });
+
+  if (existingSolve) {
+    return NextResponse.json({ error: 'Solve already added recently' });
+  }
+
   await prisma.solve.create({
     data: {
       time,

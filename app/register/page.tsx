@@ -5,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { Card, CardContent } from '@/components/ui/card';
+import { signIn } from 'next-auth/react';
+import { RegisterForm } from '@/components/register-form';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -36,41 +39,82 @@ export default function RegisterPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm mx-auto mt-10 space-y-4">
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          required
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
+    <div className='max-h-screen pt-40 flex items-center justify-center px-4'>
+      <div className="min-w-md">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <Card>
+            <CardContent className="p-6 md:p-8 space-y-6">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold">Sign Up</h1>
+                <p className="text-muted-foreground">Create your Cube Log Account</p>
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              {error && <p className="text-sm text-red-500">{error}</p>}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Account'}
+              </Button>
+
+              <div className="relative text-center text-sm">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t" />
+                </div>
+                <span className="relative z-10 bg-white px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+
+              <Button
+                type="button"
+                onClick={() => signIn('google')}
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2"
+              >
+                <img
+                  src="https://img.icons8.com/?size=160&id=DJgXlKerU6K0&format=png"
+                  width={20}
+                  height={20}
+                  alt="Google"
+                />
+                Sign Up with Google
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
       </div>
-      <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          required
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-      </div>
-            <div>
-        <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          type="text"
-          required
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-      </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Creating...' : 'Create Account'}
-      </Button>
-    </form>
+    </div>
   );
 }

@@ -24,14 +24,11 @@ export default function Solve({ id, time, createdAt, onDelete }: SolveProps) {
     <div className="bg-gray-100 p-4 rounded-lg flex justify-between items-center w-64 shadow hover:shadow-md">
       <div>
         <p className="font-mono">{time}</p>
-        <p className="text-xs text-gray-500">{new Date(createdAt).toLocaleString()}</p>
       </div>
       <button
         onClick={handleDelete}
-        className="bg-red-500 p-2 rounded text-white hover:bg-red-600"
-        aria-label="Delete solve"
-      >
-        🗑️
+        className="bg-red-500 p-2 rounded text-white hover:bg-red-600">
+        Delete
       </button>
     </div>
   );
